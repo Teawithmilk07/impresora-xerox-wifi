@@ -170,7 +170,27 @@ public class Xerox3025PrintService extends PrintService {
                         Bitmap.Config.ARGB_8888);
                 // Fill white first (PDF may not fill background)
                 bmp.eraseColor(0xFFFFFFFF);
-                page.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
+                float physicalScale = 600f / 72f;
+
+int destWidth = Math.round(page.getWidth() * physicalScale);
+int destHeight = Math.round(page.getHeight() * physicalScale);
+
+destWidth = Math.min(destWidth, bmp.getWidth());
+destHeight = Math.min(destHeight, bmp.getHeight());
+
+android.graphics.Rect dest = new android.graphics.Rect(
+        0,
+        0,
+        destWidth,
+        destHeight
+);
+
+page.render(
+        bmp,
+        dest,
+        null,
+        PdfRenderer.Page.RENDER_MODE_FOR_PRINT
+);
                 page.close();
 
                 pages[i] = bmp;
